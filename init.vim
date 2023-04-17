@@ -9,14 +9,25 @@ set sw=2
 set ruler
 set numberwidth=1
 
+let g:airline_theme='base16_gruvbox_dark_hard'
+
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
 call plug#begin('~/.vim/plugged')
 
-" LSP
- "Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-" LUA
- Plug 'nvim-lua/completion-nvim'
+"TABNINE
+ "Plug 'codota/tabnine-nvim', { 'do': './dl_binaries.sh' }
+ 
+"LUA
+"Plug 'nvim-lua/completion-nvim'
 
+"LSP
+ Plug 'neovim/nvim-lspconfig'
 
 " HOLA MUNDO
 "
@@ -24,27 +35,28 @@ call plug#begin('~/.vim/plugged')
   Plug 'sheerun/vim-polyglot'
   
   " status bar
-  Plug 'maximbaz/lightline-ale'
-  Plug 'itchyny/lightline.vim'
+  "Plug 'maximbaz/lightline-ale'
+  "Plug 'itchyny/lightline.vim'
+  "Plug 'itchyny/lightline.vim'
   Plug 'dense-analysis/ale'
-  Plug 'itchyny/lightline.vim'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
 
   " Themes
-  Plug 'morhetz/gruvbox'
-  Plug 'shinchu/lightline-gruvbox.vim'
+  "Plug 'shinchu/lightline-gruvbox.vim'
+  Plug 'vim-airline/vim-airline-themes'
+  "Plug 'morhetz/gruvbox'
+  Plug 'sainnhe/gruvbox-material'
 
   " Tree
   Plug 'scrooloose/nerdtree'
+  Plug 'ryanoasis/vim-devicons'
+  "Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
   " typing
   Plug 'jiangmiao/auto-pairs'
   Plug 'alvan/vim-closetag'
   Plug 'tpope/vim-surround'
-  "Plug 'windwp/nvim-ts-autotag'
-
-  " tmux
- " Plug 'benmills/vimux'
- " Plug 'christoomey/vim-tmux-navigator'
 
   " autocomplete
   Plug 'sirver/ultisnips'
@@ -69,22 +81,30 @@ call plug#begin('~/.vim/plugged')
   Plug 'yggdroot/indentline'
   Plug 'scrooloose/nerdcommenter'
 
+  "JAVASCRIPT
+  Plug 'pangloss/vim-javascript'
+  Plug 'maxmellon/vim-jsx-pretty'
+
+  "SNIPPETS
+  Plug 'sirver/ultisnips'
+  Plug 'mlaursen/vim-react-snippets'
+
+  Plug 'mattn/emmet-vim'
+
   call plug#end()
 
-  
-let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox'
-let g:lightline_gruvbox_color = 'both'
-let g:lightline_gruvbox_style = 'hard'
+  "EMMET config
+  let g:user_emmet_mode='n'
+  let g:user_leader_key='!'
+  let g:user_emmet_settings={'javascript': { 'extends': 'jsx' } }
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+  "snippets config
+  let g:UtilSnipsExpandTrigger="<tab>"
+
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
-
-" Start NERDTree and leave the cursor in it.
-  "autocmd VimEnter * NERDTree | wincmd p
 
 set hlsearch
 set incsearch
@@ -94,19 +114,15 @@ set smartcase
 " GRUVBOX configuration
 let g:gruvbox_contrast_dark='hard'
 highlight Normal ctermbg=NONE
+let g:gruvbox_material_background='hard'
 set noshowmode
-colorscheme gruvbox
+colorscheme gruvbox-material
 set background=dark
 
 " LSP configuration 
-
 "lua <<EOF
- "require'nvim-treesitter.configs'.setup {autotag = {enable = true}}
+"require'lspconfig'.tsserver.setup{}
 "EOF
-
-
-" require'lspconfig'.tsserver.setup{on_attach=require'completion'.on_attach}
-
 
 " Create default mappings
 let g:NERDCreateDefaultMappings = 1
@@ -137,10 +153,11 @@ let g:NERDToggleCheckAllLines = 1
 
 filetype plugin on
 
-
+"COC-CONFIGURATION
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
 " utf-8 byte sequence
-set encoding=utf-8
+set encoding=UTF-8
 " Some servers have issues with backup files, see #649
 set nobackup
 set nowritebackup
