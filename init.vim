@@ -1,57 +1,41 @@
-set number 
-set mouse=a
-set showcmd
-set showmatch
-set relativenumber
-set cursorline
-set fileencoding=uft-8
-set sw=2
-set ruler
-set numberwidth=1
-
-let g:airline_theme='base16_gruvbox_dark_hard'
-
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-
 call plug#begin('~/.vim/plugged')
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+ Plug 'othree/javascript-libraries-syntax.vim'
+
+ Plug 'christoomey/vim-tmux-navigator'
+ Plug 'philrunninger/nerdtree-buffer-ops'
+ Plug 'philrunninger/nerdtree-visual-selection'
 
 "TABNINE
- "Plug 'codota/tabnine-nvim', { 'do': './dl_binaries.sh' }
- 
-"LUA
-"Plug 'nvim-lua/completion-nvim'
+ Plug 'codota/tabnine-nvim', { 'do': './dl_binaries.sh' }
 
 "LSP
  Plug 'neovim/nvim-lspconfig'
+ Plug 'hrsh7th/cmp-nvim-lsp'
+ Plug 'hrsh7th/cmp-buffer'
+ Plug 'hrsh7th/cmp-path'
+ Plug 'hrsh7th/cmp-cmdline'
+ Plug 'hrsh7th/nvim-cmp'
 
-" HOLA MUNDO
-"
+ " For vsnip users.
+ Plug 'hrsh7th/cmp-vsnip'
+ Plug 'hrsh7th/vim-vsnip'
+
   " syntax
   Plug 'sheerun/vim-polyglot'
   
   " status bar
-  "Plug 'maximbaz/lightline-ale'
-  "Plug 'itchyny/lightline.vim'
-  "Plug 'itchyny/lightline.vim'
   Plug 'dense-analysis/ale'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
 
   " Themes
-  "Plug 'shinchu/lightline-gruvbox.vim'
-  Plug 'vim-airline/vim-airline-themes'
-  "Plug 'morhetz/gruvbox'
   Plug 'sainnhe/gruvbox-material'
 
   " Tree
   Plug 'scrooloose/nerdtree'
   Plug 'ryanoasis/vim-devicons'
-  "Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+  Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
   " typing
   Plug 'jiangmiao/auto-pairs'
@@ -73,10 +57,9 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
   " IDE
   Plug 'editorconfig/editorconfig-vim'
-  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'terryma/vim-multiple-cursors'
-  Plug 'easymotion/vim-easymotion'
   Plug 'mhinz/vim-signify'
   Plug 'yggdroot/indentline'
   Plug 'scrooloose/nerdcommenter'
@@ -89,22 +72,37 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'sirver/ultisnips'
   Plug 'mlaursen/vim-react-snippets'
 
+  "EMMET
   Plug 'mattn/emmet-vim'
+
+  "COMMENTS
+  Plug 'tpope/vim-commentary'
 
   call plug#end()
 
+  set background=dark 
+
+  "COMMENTS config
+  nnoremap <C-c> :Commentary<CR>
+  vnoremap <C-c> :Commentary<CR>
+
   "EMMET config
   let g:user_emmet_mode='n'
-  let g:user_leader_key='!'
-  let g:user_emmet_settings={'javascript': { 'extends': 'jsx' } }
+  let g:user_emmet_leader_key=','
+  let g:user_emmet_settings={
+        \ 'javascript':{ 
+        \ 'extends': 'jsx' 
+  \ }
+  \ }
+
+  "Prettier config
+  command! -nargs=0 Prettier :CocCommand prettier.formatFile
+  nnoremap <C-p> :Prettier<CR>
 
   "snippets config
   let g:UtilSnipsExpandTrigger="<tab>"
 
-nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+  nnoremap <C-a> :NERDTreeToggle<CR>
 
 set hlsearch
 set incsearch
@@ -117,12 +115,6 @@ highlight Normal ctermbg=NONE
 let g:gruvbox_material_background='hard'
 set noshowmode
 colorscheme gruvbox-material
-set background=dark
-
-" LSP configuration 
-"lua <<EOF
-"require'lspconfig'.tsserver.setup{}
-"EOF
 
 " Create default mappings
 let g:NERDCreateDefaultMappings = 1
@@ -157,7 +149,7 @@ filetype plugin on
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
 " utf-8 byte sequence
-set encoding=UTF-8
+set encoding=utf-8
 " Some servers have issues with backup files, see #649
 set nobackup
 set nowritebackup
@@ -315,5 +307,113 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+lua <<EOF 
+ 
+require'lspconfig'.tsserver.setup{}
+require'lspconfig'.html.setup{}
+require'lspconfig'.cssls.setup{}
+require'lspconfig'.cssmodules_ls.setup{}
+require'lspconfig'.emmet_ls.setup{}
+require'lspconfig'.eslint.setup{}
+require'lspconfig'.jsonls.setup{}
+require'lspconfig'.angularls.setup{}
+
+require'tabnine'.setup{
+  disable_auto_comment = true,
+  accept_keymap = "<C-A-a>",
+  dismiss_keymap = "<C-A-s>",
+  debounce_ms = 800,
+  suggestion_color = {gui = "#808080", cterm = 244},
+  exclude_filetypes = {"TelescopePrompt"}
+}
+
+require'cmp'.setup{}
+
+EOF 
+
+
+" Enable ESLint only for JavaScript.
+let g:ale_linters = { 'javascript': ['eslint'] }
+
+" Set this. Airline will handle the rest.
+let g:airline#extensions#ale#enabled = 1
+
+
+let g:NERDTreeLimitedSyntax = 1
+let g:NERDTreeHighlightFolders = 1 " enables folder icon highlighting using exact match
+let g:NERDTreeHighlightFoldersFullName = 1 " highlights the folder name
+
+let g:NERDTreeSyntaxDisableDefaultExtensions = 1
+let g:NERDTreeSyntaxDisableDefaultExactMatches = 1
+let g:NERDTreeSyntaxDisableDefaultPatternMatches = 1
+let g:NERDTreeSyntaxEnabledExtensions = ['jsx', 'tsx', 'txt', 'ts', 'env', 'md', 'js', 'css', 'html', 'json'] " enabled extensions with default colors
+let g:NERDTreeSyntaxEnabledExactMatches = ['node_modules', 'favicon.ico'] " enabled exact matches with default colors
+
+" you can add these colors to your .vimrc to help customizing
+let s:brown = "905532"
+let s:aqua =  "3AFFDB"
+let s:blue = "689FB6"
+let s:darkBlue = "44788E"
+let s:purple = "834F79"
+let s:lightPurple = "834F79"
+let s:red = "AE403F"
+let s:beige = "F5C06F"
+let s:yellow = "F09F17"
+let s:orange = "D4843E"
+let s:darkOrange = "F16529"
+let s:pink = "CB6F6F"
+let s:salmon = "EE6E73"
+let s:green = "8FAA54"
+let s:lightGreen = "31B53E"
+let s:white = "FFFFFF"
+let s:rspec_red = 'FE405F'
+let s:git_orange = 'F54D27'
+
+let g:NERDTreeExtensionHighlightColor = {} " this line is needed to avoid err
+let g:NERDTreeExtensionHighlightColor['css'] = s:blue " sets the color of css files to blue
+
+let g:NERDTreeExactMatchHighlightColor = {} " this line is needed to avoid err
+let g:NERDTreeExactMatchHighlightColor['.gitignore'] = s:git_orange " sets the color for .gitignore files
+
+let g:NERDTreePatternMatchHighlightColor = {} " this line is needed to avoid err
+let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red " sets the color for files ending with _spec.rb
+
+let g:WebDevIconsDefaultFolderSymbolColor = s:beige " sets the color for folders that did not match any rule
+let g:WebDevIconsDefaultFileSymbolColor = s:blue " sets the color for files that did not match any rule
+
+set showmatch
+set relativenumber
+set cursorline
+set fileencoding=utf-8
+set sw=2
+set ruler
+set numberwidth=1
+set clipboard=unnamed
+set ruler
+set laststatus=2
+
+nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
+
+let g:airline_theme='base16_gruvbox_dark_hard'
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#show_splits = 1
+let g:airline#extensions#tabline#show_close_button = 1
+
+nnoremap <A-x> :bnext<CR>
+nnoremap <A-z> :bprevious<CR>
+nnoremap <A-c> :bwipeout<CR>
+
+set splitright
+set splitbelow
+
+set number 
+set mouse=a
+set showcmd
+
+nmap <C-t> :vs +te <CR> i
 
 syntax enable
