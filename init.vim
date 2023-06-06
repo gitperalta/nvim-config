@@ -412,8 +412,9 @@ set splitbelow
 
 set number 
 set mouse=a
+let NERDTreeIgnore=['\.git$']
+let NERDTreeShowHidden=1
 set showcmd
 
 nmap <C-t> :vs +te <CR> i
-
-syntax enable
+syntax on
